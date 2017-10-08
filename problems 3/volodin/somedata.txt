@@ -1,0 +1,4 @@
+Id;Name;Sex;Age
+0;Pavel
+1;Vasya;m
+2;Petya;m;23
