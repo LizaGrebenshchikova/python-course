@@ -16,8 +16,12 @@ class RandomDialog(object):
         При генерации вызывает функцию turn.
         Возвращаемый объект является генератором.
         """
-        
-        return (yield from list(map(lambda x: self.turn(), range(self.max_len))))
+
+        def generateTurn(n):
+            turn = self.turn()
+            return list(map(lambda x: next(turn), range(len(self.agents))))
+
+        return (yield from list(map(generateTurn, range(self.max_len))))
         
     def turn(self):
         """
@@ -30,14 +34,15 @@ class RandomDialog(object):
         Возвращаемый объект является генератором.
         """
         
-        #Почему возвращаемый объект -- генератор, если ответы уже получены? Что генерировать?
-        
         agent = random.choice(self.agents)
         agents = self.agents.copy()
         agents.remove(agent)
         firstMsg = agent.send(None)
-        
-        return [agent.name + " : " + firstMsg] + list(map(lambda x: x.name + " : " + x.send(firstMsg), agents))
+
+        yield (agent.name + " : " + firstMsg)
+        yield from list(map(lambda x: x.name + " : " + x.send(firstMsg), agents))
+
+        return self
 
     def eval(self, dialog=None):
         """
