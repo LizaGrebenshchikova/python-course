@@ -37,7 +37,7 @@ class RandomDialog(object):
         agents.remove(agent)
         firstMsg = agent.send(None)
         
-        return [agent.name + " : " + firstMsg] + list(map(lambda x: agent.name + " : " + agent.send(firstMsg), agents))
+        return [agent.name + " : " + firstMsg] + list(map(lambda x: x.name + " : " + x.send(firstMsg), agents))
 
     def eval(self, dialog=None):
         """
