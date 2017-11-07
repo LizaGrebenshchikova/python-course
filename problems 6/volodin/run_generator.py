@@ -16,9 +16,6 @@ def generate(rd, count_dialogs=5):
 	Возвращаемый объект является генератором.
 	"""
 
-	#Зачем возращать генератор, если write пишет уже сгенерированные диалоги?
-	#Да и в примере map возращается, а не generator.
-
 	yield from list(map(lambda x: rd.eval(), range(count_dialogs)))
 
 def write(dialogs, target):
