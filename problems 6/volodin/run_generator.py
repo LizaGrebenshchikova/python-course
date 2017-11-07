@@ -87,7 +87,7 @@ def parseArgs():
 	clinton = pd.read_csv(clinton, encoding="utf-8")
 	trump = pd.read_csv(trump, encoding="utf-8")
 
-	return target.getTarget(), trump, clinton
+	return target, trump, clinton
 
 if __name__ == "__main__":
 
@@ -97,4 +97,4 @@ if __name__ == "__main__":
 
 	dialogs = generate(rd, 4)
 
-	write(dialogs, target)
+	write(dialogs, target.getTarget())
