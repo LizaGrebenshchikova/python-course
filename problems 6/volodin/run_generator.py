@@ -8,6 +8,8 @@ import pandas as pd
 from dialogsgenerator.agent import Agent
 from dialogsgenerator.randomdialog import RandomDialog
 
+MAX_DIALOGS = 99999999999
+
 def generate(rd, count_dialogs=5):
 	"""
 	Генерирует count_dialogs диалогов с помощью rd.generate().
@@ -17,7 +19,7 @@ def generate(rd, count_dialogs=5):
 	#Зачем возращать генератор, если write пишет уже сгенерированные диалоги?
 	#Да и в примере map возращается, а не generator.
 
-	return list(map(lambda x: rd.eval(), range(count_dialogs)))
+	yield from list(map(lambda x: rd.eval(), range(count_dialogs)))
 
 def write(dialogs, target):
 	"""
@@ -28,16 +30,17 @@ def write(dialogs, target):
 	if dialogs is None:
 		return
 
-	def printOneDialog(dialog):
+	def printOneDialog(n):
+		dialog = next(dialogs)
 		def printInFile(msgs):
 			target.write('turn {0}\n'.format(msgs[1]))
 			target.write("\n".join(msgs[0]))
 			target.write('\n\n')
 
-		target.write('dialog {0}\n'.format(dialog[1]))
-		list(map(printInFile, zip(dialog[0], range(len(dialog[0])))))
+		target.write('dialog {0}\n'.format(n))
+		list(map(printInFile, zip(dialog, range(len(dialog)))))
 
-	list(map(printOneDialog, zip(dialogs, range(len(dialogs)))))
+	list(map(printOneDialog, range(MAX_DIALOGS)))
 
 TRUMP_KB = "../trump.csv"
 CLINTON_KB = "../clinton.csv"
