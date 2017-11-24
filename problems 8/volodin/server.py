@@ -7,6 +7,11 @@
 from bottle import request, run, route, template
 import os
 
+import requests
+import bs4
+import random
+import os
+
 SERVER = "./server/"
 BOOKS = SERVER + "books/"
 
@@ -42,4 +47,38 @@ def getBookText(authorName, bookName):
 	page = template(SERVER + 'book_text', text=book_text)
 	return page
 
+def booksMining():
+
+	if not os.path.exists(BOOKS):
+		os.mkdir(BOOKS)
+
+	COUNT_OF_BOOKS = 100
+	for i in range(COUNT_OF_BOOKS):
+		try:
+			bookId = random.randint(1000, 15000)
+			link = "https://www.gutenberg.org/ebooks/" + str(bookId)
+			#link = "https://www.gutenberg.org/ebooks/10516"
+			page = requests.get(link).text
+			soup = bs4.BeautifulSoup(page, 'html5lib')
+			h1 = soup.find('h1').text
+			idx = h1.rfind(' by ')
+			book = h1[:idx]
+			name = h1[idx+4:]
+
+			link = "http://www.gutenberg.org/cache/epub/" + str(bookId) + "/pg" + str(bookId) + ".txt"
+			page = requests.get(link).text
+			soup = bs4.BeautifulSoup(page, 'html5lib')
+			book_text = soup.find('body').text
+
+			if not os.path.exists(BOOKS + name):
+				os.mkdir(BOOKS + name)
+			if not os.path.exists(BOOKS + name + '/' + book):
+				f = open(BOOKS + name + '/' + book, 'w')
+				f.write(book_text)
+				f.close()
+		except:
+			continue
+
+
+booksMining()
 run(host='localhost', port=5555, debug=True)
